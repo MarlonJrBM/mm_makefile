@@ -45,6 +45,7 @@ $(OBJ_DIR):
 clean:
 	rm -rf $(OBJ) *~ $(BIN)
 
+#puts dependency rules in external file
 depend: $(SRC)
 	touch $(DEPFILE)
 	makedepend -Y -f $(DEPFILE)  -- $(INCLUDES) -- $(SRC) > /dev/null 2> /dev/null
