@@ -1,6 +1,6 @@
 # mm_makefile
 
-Simple Makefile I use with my brief projects.
+Simple Makefile I use with my brief projects. Also includes vscode and clang-format files.
 
 All files in this repo are under GPLv3.
 

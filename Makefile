@@ -1,35 +1,30 @@
-###################################
-# EDIT BELOW VARIABLES WITH YOUR
-# PROJECT NEEDS
-###################################
-
 #Compiler and basic compilation flags (like warnings)
 CXX = g++
-CXXFLAGS = -Wall -Wextra
+CXXFLAGS = -Wall -Wextra -std=c++17
 
 #Folder where binary file will reside.
-#Leave with . for current folder
-BIN_DIR = .
-_BIN = myProgram
+#Leave blank for current (root) folder
+BIN_DIR = bin
+_BIN = main
 
 #Folder where source files reside. Must exist.
-#Leave . for current folder
+#Leave blank for current (root) folder
 SRC_DIR = src
-_SRC = sample.cc sugar.cc 
+_SRC = sample.cc sugar.cc
 
 #Folder where object files will reside. 
 #Will be created if it doesn't exist.
-#Leave . for current folder
-OBJ_DIR = OBJ
+#Leave blank for current (root) folder
+OBJ_DIR = obj
 
 #Folder where include files reside. Must preprend every folder with -I.
-INCLUDES = -Iinclude -I. 
+INCLUDES = -Iinclude -I. -I${SRC_DIR}
 
 #Shared libraries to be included in compilation, must preprend with -l.
-LIBS = -lpthread
+LIBS = 
 
 #Folder where to find shared libraries, must prepend with -L.
-LDFLAGS = -Llib/
+LDFLAGS = 
 
 #Debugging option. Leave 1 to create debugging symbols.
 #Leave as 0 to compile with optimization. Defaults to 0.
@@ -40,13 +35,27 @@ DEBUG ?= 0
 # you won't need to modify them.
 ##########################################
 
-
+ifneq (${BIN_DIR},)
 BIN = $(patsubst %, $(BIN_DIR)/%, $(_BIN))
+else
+BIN = ${_BIN}
+BIN_DIR = .
+endif
 
+ifneq (${SRC_DIR},)
 SRC = $(patsubst %, $(SRC_DIR)/%, $(_SRC))
+else
+SRC = ${_SRC}
+SRC_DIR = .
+endif
 
 _OBJ = $(_SRC:.cc=.o)
+ifneq (${OBJ_DIR},)
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
+else
+OBJ = ${_OBJ}
+OBJ_DIR = .
+endif
 
 DEPFILE = .deps
 
@@ -64,7 +73,6 @@ endif
 #Default rule: compiles the binary file
 $(BIN): $(OBJ_DIR) $(BIN_DIR) $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJ) $(LIBS) $(LDFLAGS)
-	@echo GO SUGAR!
 
 #Constructs object files automatically
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
@@ -88,6 +96,6 @@ clean:
 #puts dependency rules in external file
 depend: $(SRC)
 	touch $(DEPFILE)
-	makedepend -Y -f $(DEPFILE)  -- $(INCLUDES) -- $(SRC) > /dev/null 2> /dev/null
+	makedepend -p obj/ -Y -f $(DEPFILE)  -- $(INCLUDES) -- $(SRC) > /dev/null 2> /dev/null
 
 sinclude $(DEPFILE)
